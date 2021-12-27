@@ -1,6 +1,8 @@
 package ru.danilsibgatyllin.system_pattern.orm;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,15 +36,50 @@ public class UnitOfWork {
         delete();
     }
 
-    private void update() {
+    private void update(){
         // TODO
+        updateUsers.stream().forEach(user -> {
+            try {
+                PreparedStatement stm =conn.prepareStatement("update users set login= ? ,password = ? where id = ?");
+                stm.setString(1,user.getLogin());
+                stm.setString(2,user.getPassword());
+                stm.setLong(3,user.getId());
+                stm.executeUpdate();
+                updateUsers.remove(user);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
+
     }
 
-    private void insert() {
+    private void insert(){
         // TODO
+        newUsers.stream().forEach(user -> {
+            try {
+                PreparedStatement stm =conn.prepareStatement("insert into users values (? ,? ,?)");
+                stm.setString(1,user.getLogin());
+                stm.setString(2,user.getPassword());
+                stm.setLong(3,user.getId());
+                stm.executeUpdate();
+                newUsers.remove(user);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
     }
 
-    private void delete() {
+    private void delete(){
         // TODO
+        deleteUsers.stream().forEach(user -> {
+            try {
+                PreparedStatement stm =conn.prepareStatement("delete from users where id = ?");
+                stm.setLong(1,user.getId());
+                stm.executeUpdate();
+                deleteUsers.remove(user);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
     }
 }

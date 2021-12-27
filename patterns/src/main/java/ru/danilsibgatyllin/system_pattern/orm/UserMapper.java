@@ -31,7 +31,7 @@ public class UserMapper {
             selectUser.setLong(1, id);
             ResultSet rs = selectUser.executeQuery();
             if (rs.next()) {
-                user = new User(rs.getInt(1), rs.getString(2), rs.getString(3));
+                user = new User(rs.getLong(1), rs.getString(2), rs.getString(3));
                 identityMap.put(id, user);
                 return Optional.of(user);
             }
